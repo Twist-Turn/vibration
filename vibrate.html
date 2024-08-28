@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morse Code to Vibration</title>
+</head>
+<body>
+    <h1>Morse Code to Vibration</h1>
+    <textarea id="morseInput" rows="4" cols="50" placeholder="Enter Morse Code"></textarea>
+    <br><br>
+    <button onclick="convertToVibration()">Vibrate Morse Code</button>
+
+    <script>
+        const dotDuration = 200; // Duration for a dot (in milliseconds)
+        const dashDuration = 600; // Duration for a dash (in milliseconds)
+        const partPause = 200; // Pause between parts of the same letter
+        const letterPause = 600; // Pause between letters
+        const wordPause = 1400; // Pause between words
+
+        function convertToVibration() {
+            const morseCode = document.getElementById("morseInput").value.trim();
+            let vibrationPattern = [];
+
+            for (let i = 0; i < morseCode.length; i++) {
+                const char = morseCode[i];
+                
+                if (char === '.') {
+                    vibrationPattern.push(dotDuration);
+                } else if (char === '-') {
+                    vibrationPattern.push(dashDuration);
+                }
+
+                // Add pause between parts of the same letter
+                if (char === '.' || char === '-') {
+                    if (i < morseCode.length - 1 && (morseCode[i + 1] === '.' || morseCode[i + 1] === '-')) {
+                        vibrationPattern.push(partPause);
+                    }
+                } else if (char === ' ') {
+                    // Add longer pause between words if there is a double space
+                    if (i < morseCode.length - 1 && morseCode[i + 1] === ' ') {
+                        vibrationPattern.push(wordPause);
+                        i++; // Skip the next space
+                    } else {
+                        vibrationPattern.push(letterPause);
+                    }
+                }
+            }
+
+            // Trigger the vibration
+            if (navigator.vibrate) {
+                navigator.vibrate(vibrationPattern);
+            } else {
+                alert("Vibration API is not supported on this device.");
+            }
+        }
+    </script>
+</body>
+</html>
